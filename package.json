@@ -1,0 +1,24 @@
+{
+  "name": "i2b2-parser",
+  "version": "1.0.0",
+  "description": "This is a parsing service to allow parsing of i2b2-messages that are DOM independent.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ben-carmen/i2b2-parser.git"
+  },
+  "keywords": [
+    "i2b2",
+    "message",
+    "parser"
+  ],
+  "author": "‘Ben <benjamin_carmen@hms.harvard.edu>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ben-carmen/i2b2-parser/issues"
+  },
+  "homepage": "https://github.com/ben-carmen/i2b2-parser#readme"
+}
