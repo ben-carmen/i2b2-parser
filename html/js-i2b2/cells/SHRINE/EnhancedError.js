@@ -2,6 +2,7 @@
  * Created by ben on 10/13/15.
  */
 var $hrine = window.$hrine = {};
+
 $hrine.EnhancedError =
 
     (function () {
@@ -214,19 +215,19 @@ $hrine.EnhancedError =
          * @param qriNode
          * @returns {{exception: {}}}
          */
-        EnhancedError.parseProblem = function (qriNode, hiveService, document) {
+        EnhancedError.parseProblem = function (qriNode) {
             var details;
             var problem = {
                 exception: {}
             };
 
-            problem.codec = grabXmlNodeData(qriNode, 'descendant-or-self::query_status_type/problem/codec', hiveService, document);
-            problem.summary = grabXmlNodeData(qriNode, 'descendant-or-self::query_status_type/problem/summary', hiveService, document);
-            problem.description = grabXmlNodeData(qriNode, 'descendant-or-self::query_status_type/problem/description', hiveService, document);
-            problem.stamp = grabXmlNodeData(qriNode, 'descendant-or-self::query_status_type/problem/stamp', hiveService, document);
+            problem.codec = grabXmlNodeData(qriNode, 'descendant-or-self::query_status_type/problem/codec');
+            problem.summary = grabXmlNodeData(qriNode, 'descendant-or-self::query_status_type/problem/summary');
+            problem.description = grabXmlNodeData(qriNode, 'descendant-or-self::query_status_type/problem/description');
+            problem.stamp = grabXmlNodeData(qriNode, 'descendant-or-self::query_status_type/problem/stamp');
 
             //unescape embedded html.
-            details = hiveService.xPath(qriNode, 'descendant-or-self::query_status_type/problem/details', document);
+            details = i2b2.h.xPath(qriNode, 'descendant-or-self::query_status_type/problem/details');
 
             //funky stuff goin' on...get outta here!
             if (!details.length) {
@@ -241,8 +242,8 @@ $hrine.EnhancedError =
                     innerHTML = jQuery(details[0]).text();
                 }
                 problem.details = innerHTML.unescapeHTML().replace(/(<([^>]+)>)/ig, "");
-                problem.exception.name = grabXmlNodeData(qriNode, 'descendant-or-self::query_status_type/problem/details/exception/name', hiveService, document);
-                problem.exception.message = grabXmlNodeData(qriNode, 'descendant-or-self::query_status_type/problem/details/exception/message', hiveService, document);
+                problem.exception.name = grabXmlNodeData(qriNode, 'descendant-or-self::query_status_type/problem/details/exception/name');
+                problem.exception.message = grabXmlNodeData(qriNode, 'descendant-or-self::query_status_type/problem/details/exception/message');
                 problem.exception.stackTrace = parseErrorException(qriNode);
             }
 
@@ -313,8 +314,9 @@ $hrine.EnhancedError =
          * @param xPathString
          * @returns {string}
          */
-        function grabXmlNodeData(node, xPathString, hiveService, document) {
-            var nodeVal = hiveService.xPath(node, xPathString, document);
+        function grabXmlNodeData(node, xPathString) {
+            var ownerDoc = ownerDoc || document;
+            var nodeVal = i2b2.h.xPath(node, xPathString);
             return (nodeVal.length) ? nodeVal[0].firstChild.nodeValue : '';
         }
 
