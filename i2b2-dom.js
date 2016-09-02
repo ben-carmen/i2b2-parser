@@ -17,7 +17,9 @@ function I2B2DOM() {
 
 I2B2DOM.prototype.load = load;
 I2B2DOM.prototype.getAbsolutePath = getAbsolutePath;
+I2B2DOM.prototype.loadData = loadData;
 I2B2DOM.prototype.mockMessageResult = mockMessageResult;
+
 
 /**
  * load files.
@@ -38,7 +40,12 @@ function main(errors, window) {
     hiveHelper = new HiveHelper(window);
 
     // -- replace i2b2.h with ours -- //
-    window.i2b2.h = hiveHelper;
+    if(window.i2b2) {
+        window.i2b2.h = hiveHelper;
+    }
+    
+    dom.hiveHelper = hiveHelper;
+    dom.window = window;
 
     // -- core dom ready -- //
     clientLoadCallback(window);
@@ -49,6 +56,29 @@ function main(errors, window) {
  */
 function getAbsolutePath(relativePath) {
     return path.join(__dirname, relativePath);
+}
+
+
+function loadData(filename) {
+    var absPath = getAbsolutePath(filename);
+
+    // -- create a promise after loading and parsing the file. --//
+    var promise = new Promise(function (resolve, reject) {
+
+        fs.readFileAsync(absPath)
+            .then(function (data) {
+                var str = String(data);
+
+                var results = {
+                    error: false,
+                    data: str
+                };
+
+                resolve(results);
+            });
+    });
+
+    return promise;
 }
 
 /**

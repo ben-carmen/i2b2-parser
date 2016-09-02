@@ -51,8 +51,11 @@ function domLoaded(window) {
     var $ = window.jQuery;
     QryStatusCtrlr.seedDOM(window);
 
-    dom.mockMessageResult('SHRINE-1522.xml')
+    dom.mockMessageResult('query-contents.xml')
         .then(function (results) {
-           QryStatusCtrlr.refreshStatusCallback(results);
+            
+           //QryStatusCtrlr.refreshStatusCallback(results);
+           var qi_list = results.refXML.getElementsByTagName('queryDefinition');  //Original code commented by BG
+
         });
 }
