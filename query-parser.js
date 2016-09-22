@@ -20,7 +20,7 @@ function domLoaded(win) {
             var queryRecords = data.queryRecords;
             var ln = queryRecords.length;
             var queryContentsList = [];
-            var terms = {};
+            var terms = new OntologyTerm('root');
             var obj;
 
             // all query records.
@@ -41,11 +41,6 @@ something like terms = {
 }
 */
 function termBuilder(obj, queryId, terms) {
-
-    // -- ensure that terms exists as an object. --//
-    if (typeof (terms) !== 'object') {
-        terms = {};
-    }
 
     var keys = Object.keys(obj);
 
@@ -98,7 +93,8 @@ function processKey(terms, key, queryId) {
     for (var i = 0; i < ontologyList.length; i++) {
         var term = ontologyList[i];
         processTerm(currentLevel, term, queryId);
-        currentLevel = currentLevel[term];
+        //currentLevel = currentLevel[term];
+        currentLevel = currentLevel.children[term];
     }
 }
 
@@ -106,24 +102,43 @@ function processKey(terms, key, queryId) {
 function processTerm(terms, key, queryId) {
     var term;
 
-    if (!terms[key]) {
+    if (!terms.children[key]) {
         term = addTerm(terms, key, queryId);
     }
     else {
-        term = terms[key];
-        term.queries.push(queryId);
+        term = terms.children[key];
+        term.addQuery(queryId, queryId);
     }
 }
 
 //todo: make method more singlar and focused.
 function addTerm(terms, key, queryId) {
 
-    var term = {
-        key: key,
-        queries: [queryId]
-    };
-
-    terms[key] = term;
-
+    var term = new OntologyTerm(key);
+    term.addQuery(queryId, queryId);
+    terms.children[key] = term;
     return term;
 }
+
+function OntologyTerm(key) {
+    this.key = key;
+    this.children = {};
+    this.queries = {};
+}
+
+OntologyTerm.prototype.addQuery = function(queryId, queryData) {
+    this.queries[queryId] = queryData;
+};
+
+OntologyTerm.prototype.getQueries = function () {
+    return Object.keys(this.queries);
+};
+
+OntologyTerm.prototype.getQueryCount = function () {
+    return this.getQueries().length;
+};
+
+
+OntologyTerm.prototype.hasChildren = function () {
+    return !!Object.keys(this.children).length > 0;
+};
